@@ -4,21 +4,41 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
+
+    ListView timesTablesListView;
+
+    public void generateTimesTable(int timesTableNumber) {
+        ArrayList<String> timesTableContent = new ArrayList<String>();
+
+        for (int j = 1; j <= 10; j++) {
+            timesTableContent.add(Integer.toString(j * timesTableNumber));
+        }
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, timesTableContent);
+        timesTablesListView.setAdapter(arrayAdapter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SeekBar timesTablesSeekBar = findViewById(R.id.timesTablesSeekBar);
-        ListView timesTablesListView = findViewById(R.id.timesTablesListView);
+        final SeekBar timesTablesSeekBar = findViewById(R.id.timesTablesSeekBar);
+        timesTablesListView = findViewById(R.id.timesTablesListView);
 
-        timesTablesSeekBar.setMax(20);
-        timesTablesSeekBar.setProgress(10);
+        int max = 20;
+        int startingPosition = 10;
+
+        timesTablesSeekBar.setMax(max);
+        timesTablesSeekBar.setProgress(startingPosition);
 
         timesTablesSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -28,11 +48,14 @@ public class MainActivity extends AppCompatActivity {
 
                 if (i < min) {
                     timesTableNumber = min;
+                    timesTablesSeekBar.setProgress(min);
                 } else {
                     timesTableNumber = i;
                 }
 
                 Log.i("Seekbar Value", Integer.toString(timesTableNumber));
+
+                generateTimesTable(timesTableNumber);
             }
 
             @Override
